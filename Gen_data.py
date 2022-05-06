@@ -20,13 +20,8 @@ def human_maker(hu_names, hu_last_names, gender, how_many):
 
 ile_ludzi = 200
 ile_nazwisk = 5000
-age_list = [2, 33, 55, 88, 69]
-name_list = ['Aleksander', 'Awiator', 'Barnaba', 'Stanlej', 'Zygfryd']
-last_name_list = ['Świnka', 'Robak', 'Kałowski', 'Małolepszy', 'Chlebek', 'Łania', 'Laska', 'Szymczak']
-natural_death_list = ['y', 'y', None, None, 'y']
 
 # a może to na gender nie jest potrzebne w tym stylu? dodam płeć przy tworzeniu losowych imion i nazwisk
-
 # tworzenie serii płci, żeby stworzyć dataframe z imieniem nazwiskiem i płcią
 gender_male = []
 gender_female = []
@@ -66,13 +61,16 @@ woman_mix = pd.DataFrame(human_maker(women_names, women_last_names, 'k', ile_lud
 # łączenie tych dwóch dataframe w jeden i sortowanie
 Human = pd.concat([man_mix, woman_mix], ignore_index=True)
 
+# od tego momentu mam pełną listę 200 ludzi, można ją sortować i dodawać nowe kolumny itd.
+
 # sortowanie po nazwisku tylko, że polskie znaki zostaja na koncu
 Human = Human.sort_values(by=['Last_name'])
 # wypisywanie 4 wiersza z dataframe
-print(Human.loc[3])
+#print(Human.loc[3]);
 
+print(Human)
 # df.loc[df.shape[0]] = row  #dodawanie do DataFrame df wiersza row (lista)
 
 # aktualizujemy dataframe (czyli de facto nadpisujemy, bo na razie nie umiem appendować)
-Human.to_excel(writer, sheet_name='Arkusz1', index=False)  # index można dać True jak się chce numerki
-writer.save()
+#Human.to_excel(writer, sheet_name='Arkusz1', index=False)  # index można dać True jak się chce numerki
+#writer.save()
