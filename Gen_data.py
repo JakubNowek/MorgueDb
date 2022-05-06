@@ -4,9 +4,9 @@ from openpyxl import load_workbook
 import random
 import locale  # moduł do pobierania danych z windowsa
 import functools
-from sqlalchemy import (create_engine, String, DateTime)
+from sqlalchemy import (create_engine, String, DateTime, types)
 import pymysql
-import sqlalchemy.types
+# import sqlalchemy.types
 
 # https://stackoverflow.com/questions/34383000/pandas-to-sql-all-columns-as-nvarchar
 from sqlalchemy.dialects import mysql
@@ -78,9 +78,9 @@ TablicaDF.to_sql('rzeczy_znalezione', con=engine, if_exists='replace', chunksize
                         'Przedmioty': mysql.VARCHAR(255),
                         'Komentarz': mysql.VARCHAR(255)}
                  )
-
-zSQL = pd.read_sql_table('dane_pacjentow', con=engine)
-print("przed: \n", zSQL)
+# wczytywanie z MySQL do DataFrame określonej tabeli
+fromSQL = pd.read_sql_table('dane_pacjentow', con=engine)
+print("przed: \n", fromSQL)
 
 # ------------------------Do tego momentu jest zrobione, nie ruszać dołu bez autoryzacji Bowka-------------------------#
 
