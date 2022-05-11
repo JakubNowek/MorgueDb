@@ -1,5 +1,6 @@
 import xlsxwriter as xl
 import pandas as pd
+import numpy as np
 from openpyxl import load_workbook
 import random
 import locale  # moduł do pobierania danych z windowsa
@@ -15,7 +16,7 @@ from sqlalchemy.dialects import mysql
 def human_maker(hu_names, hu_last_names, gender, how_many):
     hu_made = {'Name': [], 'Last_name': [], 'Gender': []}
 
-    for row in range(how_many):
+    for row in range(how_many+1):
         hu_made['Name'].append(random.choice(hu_names))
         hu_made['Last_name'].append(random.choice(hu_last_names))
         hu_made['Gender'].append(gender)
@@ -36,9 +37,9 @@ def table_maker(colNamesList, colList, howManyRows):
     return pd.DataFrame(table)
 
 # funkcja generująca numery telefonów
-def number_generator(howMAnyNumbers):
+def number_generator(howManyNumbers):
     numbers = []
-    for i in range(howMAnyNumbers):
+    for i in range(howManyNumbers+1):
         three = ['{:03}'.format(random.randrange(1, 10**3)),
                  '{:03}'.format(random.randrange(1, 10**3)),
                  '{:03}'.format(random.randrange(1, 10**3))]
@@ -46,6 +47,27 @@ def number_generator(howMAnyNumbers):
         numbers.append(num)
     return numbers
 
+
+def work_time_gen(howMany, workTime=8):
+    work_times = []
+    for i in range(howMany+1):
+        start_h = random.randint(6, 24)
+        start_m = random.choice(list(np.arange(0, 55, 5)))
+        end_time = (start_h + workTime) if (start_h + workTime) <= 24 else ((start_h + workTime) - 24)
+        time = '{:02}:{:02} - {:02}:{:02}'.format(start_h, start_m,
+                                                  end_time, start_m)
+        work_times.append(time)
+    return work_times
+
+
+def id_maker(hi, lo=1):
+    id_list = list(range(lo, hi+1))
+    return id_list
+
+
+# ustawienia wyświetlania pandas
+pd.set_option("display.max_columns", None,
+              "max_colwidth", None, "display.expand_frame_repr", False)
 
 ile_ludzi = 200
 ile_nazwisk = 5000
@@ -105,7 +127,7 @@ engine = create_engine("mysql+pymysql://{user}:{pw}@{localhost}:{port}/{db}"
 # # nadpisz/dopisz dataframe do tabeli
 # fromSQL.to_sql('lista_chlodni', con=engine, if_exists='append', chunksize=1000, index=False)
 
-#TablicaDF.to_sql('dane_lekarzy', con=engine, if_exists='append', chunksize=1000, index=False)
+
 # ------------------------Do tego momentu jest zrobione, nie ruszać dołu bez autoryzacji Bowka-------------------------#
 
 # a może to na gender nie jest potrzebne w tym stylu? dodam płeć przy tworzeniu losowych imion i nazwisk
@@ -158,8 +180,17 @@ print(Lekarze)
 numery = number_generator(25)
 print(numery)
 # generowanie ID
-ID = list(range(1, 21))
-print(ID)
+
+
+
+# generowanie czasu pracy
+godziny = work_time_gen(20)
+print(godziny)
+Dane_lekarzy = table_maker(['ID_Lekarza', 'ID_Pracownika', 'Imie', 'Nazwisko', 'Telefon', 'Godziny_Pracy'],
+                           [id_maker(20), id_maker(20), men_names, men_last_names, number_generator(20), work_time_gen(20)],
+                           20)
+print(Dane_lekarzy)
+#TablicaDF.to_sql('dane_lekarzy', con=engine, if_exists='append', chunksize=1000, index=False)
 # wypisywanie 4 wiersza z dataframe
 # print(Human.loc[3]);
 
