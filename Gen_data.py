@@ -33,10 +33,19 @@ def table_maker(colNamesList, colList, howManyRows):
         for col in range(len(colNamesList)):
             table[colNamesList[col]].append(colList[col][row])
         # Tutaj dodamy sobie inne dane (np. wiek, kolor skóry)
-    return table
+    return pd.DataFrame(table)
 
+# funkcja generująca numery telefonów
+def number_generator(howMAnyNumbers):
+    numbers = []
+    for i in range(howMAnyNumbers):
+        three = ['{:03}'.format(random.randrange(1, 10**3)),
+                 '{:03}'.format(random.randrange(1, 10**3)),
+                 '{:03}'.format(random.randrange(1, 10**3))]
+        num = '%s-%s-%s' % (three[0], three[1], three[1])
+        numbers.append(num)
+    return numbers
 
-# tworzymy arkusz
 
 ile_ludzi = 200
 ile_nazwisk = 5000
@@ -54,16 +63,21 @@ ile_nazwisk = 5000
 #
 # random.shuffle(Imie)
 # Dane = [Imie, Nazwisko, Plec, Waga, Wzrost, Dl_penisa, Kolor_oczu]
-Kategorie = ['ID_Pacjenta', 'Przedmioty', 'Komentarz']
-ID_Pac = [1, 2, 3]
-Przedm = ['gumowa lama', 'pasek', 'kluczyki']
-Komentarz = ['wyjeto z zoladka', 'ale zolta morda', 'testkom2']
 
-Dane = [ID_Pac, Przedm, Komentarz]
-Tablica = table_maker(Kategorie, Dane, howManyRows=3)
-print(Tablica)
-TablicaDF = pd.DataFrame(Tablica)
-print(TablicaDF)
+# Przykładowy zestaw danych do dodania
+
+# Kategorie = ['ID_Lekarza', 'ID_Pracownika', 'Imie', 'Nazwisko', 'Telefon', 'Godziny_Pracy']
+# ID_Lek = [3]
+# ID_Prac = [5]
+# Imie = ['Jarmuż']
+# Nazwisko = ['Kamrat-Miguelitoczek']
+# Telefon = ['669-337-997']
+# Godz = ['9:00-17:15']
+# Dane = [ID_Lek,ID_Prac,Imie,Nazwisko,Telefon,Godz]
+# Tablica = table_maker(Kategorie, Dane, howManyRows=len(ID_Lek))
+# print(Tablica)
+# TablicaDF = pd.DataFrame(Tablica)
+# print(TablicaDF)
 
 # tworzenie sqlalchemy engine
 engine = create_engine("mysql+pymysql://{user}:{pw}@{localhost}:{port}/{db}"
@@ -73,15 +87,25 @@ engine = create_engine("mysql+pymysql://{user}:{pw}@{localhost}:{port}/{db}"
                                port="3306",
                                db="morguedb"))
 # wysyłanie danych do MySQL
-TablicaDF.to_sql('rzeczy_znalezione', con=engine, if_exists='replace', chunksize=1000, index=False,
-                 dtype={'ID_Pacjenta': mysql.INTEGER(unsigned=True),
-                        'Przedmioty': mysql.VARCHAR(255),
-                        'Komentarz': mysql.VARCHAR(255)}
-                 )
-# wczytywanie z MySQL do DataFrame określonej tabeli
-fromSQL = pd.read_sql_table('dane_pacjentow', con=engine)
-print("przed: \n", fromSQL)
 
+# TablicaDF.to_sql('rzeczy_znalezione', con=engine, if_exists='replace', chunksize=1000, index=False,
+#                  dtype={'ID_Pacjenta': mysql.INTEGER(unsigned=True),
+#                         'Przedmioty': mysql.VARCHAR(255),
+#                         'Komentarz': mysql.VARCHAR(255)}
+#                  )
+
+# # wczytywanie z MySQL do DataFrame określonej tabeli
+# fromSQL = pd.read_sql_table('lista_chlodni', con=engine)
+# print("fromSQL: \n", fromSQL)
+#
+# # dodaj jeden wiersz do dataframe
+# fromSQL.loc[fromSQL.shape[0]] = [1,3,'1-8','bosman',20,20]
+# print("fromSQL po: \n", fromSQL)
+#
+# # nadpisz/dopisz dataframe do tabeli
+# fromSQL.to_sql('lista_chlodni', con=engine, if_exists='append', chunksize=1000, index=False)
+
+#TablicaDF.to_sql('dane_lekarzy', con=engine, if_exists='append', chunksize=1000, index=False)
 # ------------------------Do tego momentu jest zrobione, nie ruszać dołu bez autoryzacji Bowka-------------------------#
 
 # a może to na gender nie jest potrzebne w tym stylu? dodam płeć przy tworzeniu losowych imion i nazwisk
@@ -97,7 +121,7 @@ gender_female = pd.Series(gender_female)
 gender_male = pd.Series(gender_male)
 
 # wchodzi pandas
-writer = pd.ExcelWriter('Pacjeci.xlsx', engine='xlsxwriter')
+#writer = pd.ExcelWriter('Pacjeci.xlsx', engine='xlsxwriter')
 
 # pobieranie dataframe z określonego pliku, określonej kolumny i określonej liczby wierszy
 
@@ -128,6 +152,14 @@ Human = pd.concat([man_mix, woman_mix], ignore_index=True)
 
 # sortowanie po nazwisku tylko, że polskie znaki zostaja na koncu
 Human = Human.sort_values(by=['Last_name'])
+#print(Human)
+Lekarze = table_maker(['Imie', 'Nazwisko'], [men_names, men_last_names],20)
+print(Lekarze)
+numery = number_generator(25)
+print(numery)
+# generowanie ID
+ID = list(range(1, 21))
+print(ID)
 # wypisywanie 4 wiersza z dataframe
 # print(Human.loc[3]);
 
