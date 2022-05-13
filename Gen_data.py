@@ -6,13 +6,14 @@ import random
 import locale  # moduł do pobierania danych z windowsa
 import functools
 from sqlalchemy import (create_engine, String, DateTime, types)
+import types
 import pymysql
 # import sqlalchemy.types
 
 # https://stackoverflow.com/questions/34383000/pandas-to-sql-all-columns-as-nvarchar
 from sqlalchemy.dialects import mysql
 
-
+# generally obsolete, use people_maker or table_maker
 def human_maker(hu_names, hu_last_names, gender, how_many):
     hu_made = {'Name': [], 'Last_name': [], 'Gender': []}
 
@@ -23,6 +24,11 @@ def human_maker(hu_names, hu_last_names, gender, how_many):
         # Tutaj dodamy sobie inne dane (np. wiek, kolor skóry)
     return hu_made
 
+# tworzenie mixu imion i nazwisk
+def people_maker(list1, list2, howMany):
+    ret_list = random.choices(list1, k=int(howMany/2))
+    ret_list += (random.choices(list2, k=int(howMany-howMany/2)))
+    return ret_list
 
 def table_maker(colNamesList, colList, howManyRows):
     table = {}
@@ -160,12 +166,13 @@ women_last_names = pd.read_excel(r'womenlastnames200.xlsx', usecols='A', nrows=i
 
 
 # łączenie męskich i żeńskich imion i nazwisk (gdy nie są pomieszane)
-names = pd.concat([pd.Series(men_names), pd.Series(women_names)], ignore_index=True)
-last_names = pd.concat([pd.Series(men_last_names), pd.Series(women_last_names)], ignore_index=True)
+# names = pd.concat([pd.Series(men_names), pd.Series(women_names)], ignore_index=True)
+# last_names = pd.concat([pd.Series(men_last_names), pd.Series(women_last_names)], ignore_index=True)
 
 # tworzenie dwóch dataframe dla mężczyzn i kobiet
 man_mix = pd.DataFrame(human_maker(men_names, men_last_names, 'm', ile_ludzi // 2))
 woman_mix = pd.DataFrame(human_maker(women_names, women_last_names, 'k', ile_ludzi // 2))
+
 
 # łączenie tych dwóch dataframe w jeden i sortowanie
 Human = pd.concat([man_mix, woman_mix], ignore_index=True)
@@ -176,27 +183,29 @@ Human = pd.concat([man_mix, woman_mix], ignore_index=True)
 Human = Human.sort_values(by=['Last_name'])
 #print(Human)
 Lekarze = table_maker(['Imie', 'Nazwisko'], [men_names, men_last_names],20)
-print(Lekarze)
+#print(Lekarze)
 numery = number_generator(25)
-print(numery)
+#print(numery)
 # generowanie ID
-
+# print(people_maker(men_names,women_names,20))
+# print(people_maker(men_last_names,women_last_names,20))
 
 
 # generowanie czasu pracy
 godziny = work_time_gen(20)
-print(godziny)
+#print(godziny)
+
+# generowanie tabeli lekarzy i wysyłanie do MySQL
+ileDanych = 20
 Dane_lekarzy = table_maker(['ID_Lekarza', 'ID_Pracownika', 'Imie', 'Nazwisko', 'Telefon', 'Godziny_Pracy'],
-                           [id_maker(20), id_maker(20), men_names, men_last_names, number_generator(20), work_time_gen(20)],
-                           20)
+                           [id_maker(ileDanych), id_maker(ileDanych),
+                            people_maker(men_names, women_names, ileDanych),
+                            people_maker(men_last_names, women_last_names, ileDanych),
+                            number_generator(ileDanych), work_time_gen(ileDanych)],
+                           ileDanych)
 print(Dane_lekarzy)
-#TablicaDF.to_sql('dane_lekarzy', con=engine, if_exists='append', chunksize=1000, index=False)
-# wypisywanie 4 wiersza z dataframe
-# print(Human.loc[3]);
+Dane_lekarzy.to_sql('dane_lekarzy', con=engine, if_exists='replace', chunksize=1000, index=False)
+
 
 # print(Human)
 # df.loc[df.shape[0]] = row  #dodawanie do DataFrame df wiersza row (lista)
-
-# aktualizujemy dataframe (czyli de facto nadpisujemy, bo na razie nie umiem appendować)
-# Human.to_excel(writer, sheet_name='Arkusz1', index=False)  # index można dać True jak się chce numerki
-# writer.save()
