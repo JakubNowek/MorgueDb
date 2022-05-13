@@ -195,17 +195,60 @@ numery = number_generator(25)
 godziny = work_time_gen(20)
 #print(godziny)
 
-# generowanie tabeli lekarzy i wysyłanie do MySQL
-ileDanych = 20
-Dane_lekarzy = table_maker(['ID_Lekarza', 'ID_Pracownika', 'Imie', 'Nazwisko', 'Telefon', 'Godziny_Pracy'],
-                           [id_maker(ileDanych), id_maker(ileDanych),
-                            people_maker(men_names, women_names, ileDanych),
-                            people_maker(men_last_names, women_last_names, ileDanych),
-                            number_generator(ileDanych), work_time_gen(ileDanych)],
-                           ileDanych)
-print(Dane_lekarzy)
-Dane_lekarzy.to_sql('dane_lekarzy', con=engine, if_exists='replace', chunksize=1000, index=False)
+# GENEROWANIE:
+pola_tabel = {'dane_lekarzy': ['ID_Lekarza', 'ID_Pracownika', 'Imie', 'Nazwisko', 'Telefon', 'Godziny_Pracy'],
 
+              'dane_pacjentow': ['ID_Pacjenta', 'ID_Sali', 'ID_Chlodni', 'ID_Komory', 'ID_Lekarza',
+                           'Imie', 'Nazwisko', 'Nazwisko_Rodowe', 'PESEL', 'Plec', 'Wiek', 'Wzrost', 'Waga',
+                           'Data_Urodzenia', 'Miejsce_Urodzenia',  'Data_Sekcji', 'Komentarz'],
+
+              'dane_do_odbioru_zwlok': ['ID_Pacjenta', 'ID_Lekarza', 'Odbiorca', 'Imie', 'Nazwisko', 'Data'],
+
+              'dane_placowki': ['Nazwa_Placowki', 'Ulica', 'Miejscowosc', 'Kod_Pocztowy', 'Godziny_Otwarcia',
+                                'Telefon', 'Mail'],
+
+              'dane_pracownikow_placowki': ['ID_Pracownika', 'Imie', 'Nazwisko', 'Nazwa_Placowki', 'Zawod',
+                                            'Telefon', 'Godziny_Pracy'],
+
+              'dane_sekcji': ['ID_Pacjenta', 'ID_Lekarza', 'Data', 'Nakaz', 'Zakaz', 'Nr_Dokumentu', 'Komentarz'],
+
+              'dane_transportowe': ['ID_Pacjenta', 'Transport'],
+
+              'karta_zgonu': ['ID_Pacjenta', 'ID_Lekarza', 'Nazwa_Podmiotu', 'Osoba_Zmarla', 'Dokument',
+                              'Nr_Dokumentu', 'Data', 'Godzina', 'Data_Znalezienia', 'Godzina_Znalezienia',
+                              'Miejsce', 'Porod', 'Kolejnosc', 'Ciezar', 'Dlugosc', 'Okres_Ciazy', 'Apgar',
+                              'Przyczyna', 'Specjalna', 'Status', 'Uwzglednia', 'Data_Karty', 'Urzad'],
+
+              'lista_chlodni': ['ID_Sali', 'ID_Chlodni', 'Zakres_Komor', 'Model', 'Ilosc_Miejsc', 'Ilosc_Wolnych_Miejsc'],
+
+              'lista_sal': ['ID_Sali', 'Stan', 'Typ', 'Ilosc_Chlodni', 'Specjalna', 'DOK'],
+
+              'rzeczy_znalezione': ['ID_Pacjenta', 'Przedmioty', 'Komentarz']
+              }
+# generowanie tabeli lekarzy i wysyłanie do MySQL
+# ileDanych = 20
+# Dane_lekarzy = table_maker(pola_tabel['dane_lekarzy'],
+#                            [id_maker(ileDanych), id_maker(ileDanych),
+#                             people_maker(men_names, women_names, ileDanych),
+#                             people_maker(men_last_names, women_last_names, ileDanych),
+#                             number_generator(ileDanych),
+#                             work_time_gen(ileDanych)],
+#                            ileDanych)
+# print(Dane_lekarzy)
+# Dane_lekarzy.to_sql('dane_lekarzy', con=engine, if_exists='replace', chunksize=1000, index=False)
+
+# generowanie tabeli dane_pacjentow i wysyłanie do MySQL
+ileDanych = 20
+Dane_pacjentow = table_maker(pola_tabel['dane_pacjentow'],
+                             [id_maker(ileDanych),
+                              id_maker(ileDanych),
+                              people_maker(men_names, women_names, ileDanych),
+                              people_maker(men_last_names, women_last_names, ileDanych),
+                              number_generator(ileDanych),
+                              work_time_gen(ileDanych)],
+                             ileDanych)
+print(Dane_pacjentow)
+# Dane_pacjentow.to_sql('dane_lekarzy', con=engine, if_exists='replace', chunksize=1000, index=False)
 
 # print(Human)
 # df.loc[df.shape[0]] = row  #dodawanie do DataFrame df wiersza row (lista)
