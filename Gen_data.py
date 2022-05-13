@@ -1,6 +1,7 @@
 import xlsxwriter as xl
 import pandas as pd
 import numpy as np
+import datetime
 from openpyxl import load_workbook
 import random
 import locale  # moduł do pobierania danych z windowsa
@@ -64,6 +65,19 @@ def work_time_gen(howMany, workTime=8):
                                                   end_time, start_m)
         work_times.append(time)
     return work_times
+
+
+def date_gen(howMany, start_date=datetime.date(1900, 1, 1)):
+    dates = []
+    end_date = datetime.date.today()
+
+    time_between_dates = end_date - start_date
+    days_between_dates = time_between_dates.days
+    for i in range(howMany + 1):
+        random_number_of_days = random.randrange(days_between_dates)
+        random_date = start_date + datetime.timedelta(days=random_number_of_days)
+        dates.append(str(random_date))
+    return dates
 
 
 def id_maker(hi, lo=1):
@@ -199,8 +213,8 @@ godziny = work_time_gen(20)
 pola_tabel = {'dane_lekarzy': ['ID_Lekarza', 'ID_Pracownika', 'Imie', 'Nazwisko', 'Telefon', 'Godziny_Pracy'],
 
               'dane_pacjentow': ['ID_Pacjenta', 'ID_Sali', 'ID_Chlodni', 'ID_Komory', 'ID_Lekarza',
-                           'Imie', 'Nazwisko', 'Nazwisko_Rodowe', 'PESEL', 'Plec', 'Wiek', 'Wzrost', 'Waga',
-                           'Data_Urodzenia', 'Miejsce_Urodzenia',  'Data_Sekcji', 'Komentarz'],
+                                 'Imie', 'Nazwisko', 'Nazwisko_Rodowe', 'PESEL', 'Plec', 'Wiek', 'Wzrost', 'Waga',
+                                 'Data_Urodzenia', 'Miejsce_Urodzenia',  'Data_Sekcji', 'Komentarz'],
 
               'dane_do_odbioru_zwlok': ['ID_Pacjenta', 'ID_Lekarza', 'Odbiorca', 'Imie', 'Nazwisko', 'Data'],
 
@@ -225,6 +239,7 @@ pola_tabel = {'dane_lekarzy': ['ID_Lekarza', 'ID_Pracownika', 'Imie', 'Nazwisko'
 
               'rzeczy_znalezione': ['ID_Pacjenta', 'Przedmioty', 'Komentarz']
               }
+
 # generowanie tabeli lekarzy i wysyłanie do MySQL
 # ileDanych = 20
 # Dane_lekarzy = table_maker(pola_tabel['dane_lekarzy'],
@@ -238,16 +253,24 @@ pola_tabel = {'dane_lekarzy': ['ID_Lekarza', 'ID_Pracownika', 'Imie', 'Nazwisko'
 # Dane_lekarzy.to_sql('dane_lekarzy', con=engine, if_exists='replace', chunksize=1000, index=False)
 
 # generowanie tabeli dane_pacjentow i wysyłanie do MySQL
-ileDanych = 20
-Dane_pacjentow = table_maker(pola_tabel['dane_pacjentow'],
-                             [id_maker(ileDanych),
-                              id_maker(ileDanych),
-                              people_maker(men_names, women_names, ileDanych),
-                              people_maker(men_last_names, women_last_names, ileDanych),
-                              number_generator(ileDanych),
-                              work_time_gen(ileDanych)],
-                             ileDanych)
-print(Dane_pacjentow)
+
+# 'dane_pacjentow': ['ID_Pacjenta', 'ID_Sali', 'ID_Chlodni', 'ID_Komory', 'ID_Lekarza',
+#                    'Imie', 'Nazwisko', 'Nazwisko_Rodowe', 'PESEL', 'Plec', 'Wiek', 'Wzrost', 'Waga',
+#                    'Data_Urodzenia', 'Miejsce_Urodzenia', 'Data_Sekcji', 'Komentarz'],
+
+# ileDanych = 20
+# Dane_pacjentow = table_maker(pola_tabel['dane_pacjentow'],  # uuaa to jeszcze do zrobienia jest i trzeba zdecydować
+#                              [id_maker(ileDanych),          # ile ma być sal do czego itd.
+#                               id_maker(ileDanych),
+#                               people_maker(men_names, women_names, ileDanych),
+#                               people_maker(men_last_names, women_last_names, ileDanych),
+#                               number_generator(ileDanych),
+#                               work_time_gen(ileDanych)],
+#                              ileDanych)
+# print(Dane_pacjentow)
+
+print(date_gen(20))
+print(datetime.date.today())
 # Dane_pacjentow.to_sql('dane_lekarzy', con=engine, if_exists='replace', chunksize=1000, index=False)
 
 # print(Human)
