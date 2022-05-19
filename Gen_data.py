@@ -50,7 +50,7 @@ def number_generator(howManyNumbers):
         three = ['{:03}'.format(random.randrange(1, 10**3)),
                  '{:03}'.format(random.randrange(1, 10**3)),
                  '{:03}'.format(random.randrange(1, 10**3))]
-        num = '%s-%s-%s' % (three[0], three[1], three[1])
+        num = '%s-%s-%s' % (three[0], three[1], three[2])
         numbers.append(num)
     return numbers
 
@@ -81,7 +81,8 @@ def date_gen(howMany, start_date=datetime.date(1900, 1, 1)):
 
 
 def id_maker(hi, lo=1):
-    id_list = list(range(lo, hi+1))
+    id_list = list(range(lo, lo+hi+1))
+    print(len(id_list))
     return id_list
 
 
@@ -240,17 +241,24 @@ pola_tabel = {'dane_lekarzy': ['ID_Lekarza', 'ID_Pracownika', 'Imie', 'Nazwisko'
               'rzeczy_znalezione': ['ID_Pacjenta', 'Przedmioty', 'Komentarz']
               }
 
-# generowanie tabeli lekarzy i wysyłanie do MySQL
-# ileDanych = 20
-# Dane_lekarzy = table_maker(pola_tabel['dane_lekarzy'],
-#                            [id_maker(ileDanych), id_maker(ileDanych),
-#                             people_maker(men_names, women_names, ileDanych),
-#                             people_maker(men_last_names, women_last_names, ileDanych),
-#                             number_generator(ileDanych),
-#                             work_time_gen(ileDanych)],
-#                            ileDanych)
-# print(Dane_lekarzy)
-# Dane_lekarzy.to_sql('dane_lekarzy', con=engine, if_exists='replace', chunksize=1000, index=False)
+#generowanie tabeli lekarzy i wysyłanie do MySQL
+ileDanych = 20
+Dane_lekarzy = table_maker(pola_tabel['dane_lekarzy'],
+                           [id_maker(ileDanych, lo=41), id_maker(ileDanych, lo=41),
+                            people_maker(men_names, women_names, ileDanych),
+                            people_maker(men_last_names, women_last_names, ileDanych),
+                            number_generator(ileDanych),
+                            work_time_gen(ileDanych)],
+                           ileDanych)
+print(Dane_lekarzy)
+# # UWAGA, przy operacji replace mogą się kasować typy danych
+Dane_lekarzy.to_sql('dane_lekarzy', con=engine, if_exists='append', chunksize=1000, index=False)
+
+
+# # Jak dodajemy tabelę nową to tak jak poniżej możemy dodać primary key:
+# with engine.connect() as con:
+#     con.execute('ALTER TABLE `dane_lekarzy` ADD PRIMARY KEY (`ID_Lekarza`);')
+
 
 # generowanie tabeli dane_pacjentow i wysyłanie do MySQL
 
