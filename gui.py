@@ -70,7 +70,7 @@ class App(customtkinter.CTk):
         self.button_1 = customtkinter.CTkButton(master=self.frame_left,
                                                 text="Pacjenci",
                                                 fg_color=("gray75", "gray30"),  # <- custom tuple-color
-                                                command=self.button_pacjenci_another_way)
+                                                command=self.button_lista_pacjentow_uproszczona)
         self.button_1.grid(row=2, column=0, pady=10, padx=20)
 
         self.button_2 = customtkinter.CTkButton(master=self.frame_left,
@@ -82,7 +82,7 @@ class App(customtkinter.CTk):
         self.button_3 = customtkinter.CTkButton(master=self.frame_left,
                                                 text="Grafik",
                                                 fg_color=("gray75", "gray30"),  # <- custom tuple-color
-                                                command=self.button_pacjenci_another_way)
+                                                command=self.button_lista_pacjentow_uproszczona)
         self.button_3.grid(row=4, column=0, pady=10, padx=20)
 
         self.switch_1 = customtkinter.CTkSwitch(master=self.frame_left)
@@ -137,7 +137,7 @@ class App(customtkinter.CTk):
     #
     #     pt.show()
 
-    def button_pacjenci_another_way(self):
+    def button_lista_lekarzy(self):
         for widget in self.frame_pacjenci.winfo_children():
             widget.destroy()  # czyscimy wszystkie obiekty z frame, aby przy przełączaniu okienek nie pozostały niepotrzebne dane
         x = db_connection.moreguDB()
@@ -160,7 +160,7 @@ class App(customtkinter.CTk):
             nazwisko_label = tk.Label(master=self.frame_pacjenci, text=nazwisko, anchor="w")
             telefon_label = tk.Label(master=self.frame_pacjenci, text=telefon, anchor="w")
             godziny_pracy_label = tk.Label(master=self.frame_pacjenci, text=godziny_pracy, anchor="w")
-            action_button = tk.Button(master=self.frame_pacjenci, text="Szczegóły",)
+            action_button = tk.Button(master=self.frame_pacjenci, text="Szczegóły")
 
             id_lekarza_label.grid(row=row, column=0, sticky="ew")
             id_pracownika_label.grid(row=row, column=1, sticky="ew")
@@ -172,7 +172,7 @@ class App(customtkinter.CTk):
 
             row += 1
 
-    def button_lista_sal(self): # analogia do button_pacjenci_another_way
+    def button_lista_sal(self): # analogia do button_lista_lekarzy
         for widget in self.frame_pacjenci.winfo_children():
             widget.destroy()
 
@@ -208,6 +208,44 @@ class App(customtkinter.CTk):
             dok_label.grid(row=row, column=5, sticky="ew")
 
             row += 1
+
+    def button_lista_pacjentow_uproszczona(self):
+        for widget in self.frame_pacjenci.winfo_children():
+            widget.destroy()
+
+        x = db_connection.moreguDB()
+        df = x.dane_pacjentow_uproszczona().values.tolist()
+        self.frame_pacjenci.tkraise()
+        self.frame_pacjenci.grid_columnconfigure(1, weight=1)
+        tk.Label(master=self.frame_pacjenci, text="Id pacjenta", anchor="w").grid(row=0, column=0, sticky="ew")
+        tk.Label(master=self.frame_pacjenci, text="Imie", anchor="w").grid(row=0, column=1, sticky="ew")
+        tk.Label(master=self.frame_pacjenci, text="Nazwisko", anchor="w").grid(row=0, column=2, sticky="ew")
+        tk.Label(master=self.frame_pacjenci, text="Pesel", anchor="w").grid(row=0, column=3, sticky="ew")
+        tk.Label(master=self.frame_pacjenci, text="Szczegóły", anchor="w").grid(row=0, column=4, sticky="ew")
+        row = 1
+
+        for (Id_pacjenta, Imie, Nazwisko, Pesel) in df:
+            Id_pacjenta_label = tk.Label(master=self.frame_pacjenci, text=str(Id_pacjenta), anchor="w")
+            imie_label = tk.Label(master=self.frame_pacjenci, text=Imie, anchor="w")
+            nazwisko_label = tk.Label(master=self.frame_pacjenci, text=Nazwisko, anchor="w")
+            label_label = tk.Label(master=self.frame_pacjenci, text=str(Pesel), anchor="w")
+            szczegoly_label = tk.Button(master=self.frame_pacjenci, text="Szczegóły",command=lambda id=Id_pacjenta: self.details(id))
+
+            Id_pacjenta_label.grid(row=row, column=0, sticky="ew")
+            imie_label.grid(row=row, column=1, sticky="ew")
+            nazwisko_label.grid(row=row, column=2, sticky="ew")
+            label_label.grid(row=row, column=3, sticky="ew")
+            szczegoly_label.grid(row=row, column=4, sticky="ew")
+
+            row += 1
+
+
+    def details(self,id_pacjenta):
+        x = db_connection.moreguDB()
+        query = x.dane_pacjenta_rozszerzone(id_pacjenta)
+        print(1)
+
+
 
 
     def change_mode(self): # zmiana jasny ciemny motyw
