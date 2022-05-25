@@ -1,9 +1,13 @@
 import tkinter
 import tkinter.messagebox
 import customtkinter
+import db_connection
+
 
 customtkinter.set_appearance_mode("System")  # Modes: "System" (standard), "Dark", "Light"
 customtkinter.set_default_color_theme("blue")  # Themes: "blue" (standard), "green", "dark-blue"
+
+
 
 
 class App(customtkinter.CTk):
@@ -141,6 +145,10 @@ class App(customtkinter.CTk):
         self.mainloop()
 
 
+x = db_connection.moreguDB()
+x.test_connection()
+
 if __name__ == "__main__":
     app = App()
     app.start()
+
