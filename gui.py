@@ -137,6 +137,8 @@ class App(customtkinter.CTk):
     #     pt.show()
 
     def button_pacjenci_another_way(self):
+        for widget in self.frame_pacjenci.winfo_children():
+            widget.destroy()
         x = db_connection.moreguDB()
         df = x.test_connection().values.tolist()
         self.frame_pacjenci.tkraise()
@@ -170,6 +172,9 @@ class App(customtkinter.CTk):
             row += 1
 
     def button_lista_sal(self):
+        for widget in self.frame_pacjenci.winfo_children():
+            widget.destroy()
+
         x = db_connection.moreguDB()
         df = x.lista_sal().values.tolist()
         self.frame_pacjenci.tkraise()
