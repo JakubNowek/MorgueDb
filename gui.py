@@ -2,16 +2,18 @@ import tkinter
 import tkinter.messagebox
 import customtkinter
 import db_connection
+from pandastable import Table, TableModel, config
 
 
-customtkinter.set_appearance_mode("System")  # Modes: "System" (standard), "Dark", "Light"
+
+customtkinter.set_appearance_mode("Light")  # Modes: "System" (standard), "Dark", "Light"
 customtkinter.set_default_color_theme("blue")  # Themes: "blue" (standard), "green", "dark-blue"
 
 
 
 
 class App(customtkinter.CTk):
-    WIDTH = 780
+    WIDTH = 840
     HEIGHT = 520
 
     def __init__(self):
@@ -67,7 +69,7 @@ class App(customtkinter.CTk):
         self.button_1 = customtkinter.CTkButton(master=self.frame_left,
                                                 text="Pacjenci",
                                                 fg_color=("gray75", "gray30"),  # <- custom tuple-color
-                                                command=self.frame_info.tkraise)
+                                                command=self.button_pacjenci)
         self.button_1.grid(row=2, column=0, pady=10, padx=20)
 
         self.button_2 = customtkinter.CTkButton(master=self.frame_left,
@@ -96,17 +98,6 @@ class App(customtkinter.CTk):
         self.frame_info.rowconfigure(0, weight=1)
         self.frame_info.columnconfigure(0, weight=1)
 
-        self.label_info_1 = customtkinter.CTkLabel(master=self.frame_info,
-                                                   text="CTkLabel: Lorem ipsum dolor sit,\n" +
-                                                        "amet consetetur sadipscing elitr,\n" +
-                                                        "sed diam nonumy eirmod tempor",
-                                                   height=100,
-                                                   fg_color=("white", "gray38"),  # <- custom tuple-color
-                                                   justify=tkinter.LEFT)
-        self.label_info_1.grid(column=0, row=0, sticky="nwe", padx=15, pady=15)
-
-        self.progressbar = customtkinter.CTkProgressBar(master=self.frame_info)
-        self.progressbar.grid(row=1, column=0, sticky="ew", padx=15, pady=15)
         self.frame_info.tkraise()
         # ============ frame_pacjenci ============
 
@@ -129,6 +120,28 @@ class App(customtkinter.CTk):
     def button_event(self):
         print("Button pressed")
 
+    def button_pacjenci(self):
+        self.frame_info.tkraise()
+        x = db_connection.moreguDB()
+        df = x.test_connection()
+        pt = Table(self.frame_info,dataframe=df,showtoolbar=True, showstatusbar=True)
+        options = {'align': 'w',
+             'cellbackgr': '#F4F4F3',
+             'cellwidth': 80,
+             'floatprecision': 2,
+             'thousandseparator': '',
+             'font': 'Arial',
+             'fontsize': 12,
+             'fontstyle': '',
+             'grid_color': '#ABB1AD',
+             'linewidth': 1,
+             'rowheight': 22,
+             'rowselectedcolor': '#E4DED4',
+             'textcolor': 'black'}
+        config.apply_options(options, pt)
+
+        pt.show()
+
 
 
 
@@ -145,8 +158,6 @@ class App(customtkinter.CTk):
         self.mainloop()
 
 
-x = db_connection.moreguDB()
-x.test_connection()
 
 if __name__ == "__main__":
     app = App()

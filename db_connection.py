@@ -9,7 +9,7 @@ class moreguDB:
     def __init__(self):
         self.engine = create_engine("mysql+pymysql://{user}:{pw}@{localhost}:{port}/{db}"
                                     .format(user="root",
-                                            pw=":)",
+                                            pw="ENTER PASSWORD HERE",
                                             localhost="192.168.1.163",
                                             port="3306",
                                             db="morguedb"))
@@ -18,5 +18,5 @@ class moreguDB:
     def test_connection(self):
         result = self.engine.execute("select * from dane_lekarzy")
         df = pd.DataFrame(result)
-        print(df)
         result.close()
+        return df
