@@ -25,7 +25,8 @@ class App(customtkinter.CTk):
         self.protocol("WM_DELETE_WINDOW", self.on_closing)  # call .on_closing() when app gets closed
 
         # ============ create two frames ============
-
+        #  ============ frame_left_part1 ============ # została podzielona na 2 czesci i przeniesiona tutaj ze względu na bugi tkintera
+        # zawiera lewy pasek ktory jest niezmienny w programie, wyswietlanie odbywa sie na prawym pasku
         # configure grid layout (2x1)
         self.grid_columnconfigure(1, weight=1)
         self.grid_rowconfigure(0, weight=1)
@@ -53,7 +54,7 @@ class App(customtkinter.CTk):
         self.frame_pacjenci.grid(row=0, column=0, columnspan=2, rowspan=4, pady=20, padx=20, sticky="nsew")
 
 
-        # ============ frame_left ============
+        # ============ frame_left_part2 ============
 
         # configure grid layout (1x11)
         self.frame_left.grid_rowconfigure(0, minsize=10)  # empty row with minsize as spacing
@@ -138,12 +139,12 @@ class App(customtkinter.CTk):
 
     def button_pacjenci_another_way(self):
         for widget in self.frame_pacjenci.winfo_children():
-            widget.destroy()
+            widget.destroy()  # czyscimy wszystkie obiekty z frame, aby przy przełączaniu okienek nie pozostały niepotrzebne dane
         x = db_connection.moreguDB()
-        df = x.test_connection().values.tolist()
-        self.frame_pacjenci.tkraise()
+        df = x.test_connection().values.tolist() # pobieramy wartosci z bazy danych i zapisujemy do listy
+        self.frame_pacjenci.tkraise() #wysuwamy frame na pierwsze miejsce
         self.frame_pacjenci.grid_columnconfigure(1, weight=1)
-        tk.Label(master=self.frame_pacjenci, text="Id lekarza", anchor="w").grid(row=0, column=0, sticky="ew")
+        tk.Label(master=self.frame_pacjenci, text="Id lekarza", anchor="w").grid(row=0, column=0, sticky="ew") #nagłowki tabeli
         tk.Label(master=self.frame_pacjenci, text="Id pracownika", anchor="w").grid(row=0, column=1, sticky="ew")
         tk.Label(master=self.frame_pacjenci, text="Imie", anchor="w").grid(row=0, column=2, sticky="ew")
         tk.Label(master=self.frame_pacjenci, text="Nazwisko", anchor="w").grid(row=0, column=3, sticky="ew")
@@ -152,7 +153,7 @@ class App(customtkinter.CTk):
         tk.Label(master=self.frame_pacjenci, text="Szczegóły", anchor="w").grid(row=0, column=6, sticky="ew")
         row=1
 
-        for (id_lekarza, id_pracownika, imie,nazwisko,telefon,godziny_pracy) in df:
+        for (id_lekarza, id_pracownika, imie,nazwisko,telefon,godziny_pracy) in df: # w petli dodajemy wszystkie rekordy
             id_lekarza_label = tk.Label(master=self.frame_pacjenci, text=str(id_lekarza), anchor="w")
             id_pracownika_label = tk.Label(master=self.frame_pacjenci, text=str(id_lekarza), anchor="w")
             imie_label = tk.Label(master=self.frame_pacjenci, text=imie, anchor="w")
@@ -171,7 +172,7 @@ class App(customtkinter.CTk):
 
             row += 1
 
-    def button_lista_sal(self):
+    def button_lista_sal(self): # analogia do button_pacjenci_another_way
         for widget in self.frame_pacjenci.winfo_children():
             widget.destroy()
 
@@ -205,19 +206,19 @@ class App(customtkinter.CTk):
             row += 1
 
 
-    def change_mode(self):
+    def change_mode(self): # zmiana jasny ciemny motyw
             if self.switch_2.get() == 1:
                 customtkinter.set_appearance_mode("dark")
             else:
                 customtkinter.set_appearance_mode("light")
 
-    def change_bool_to_mark(self,number):
+    def change_bool_to_mark(self,number): # zamienie boola na yes/no marka
         if number==1:
             return "✓"
         else:
             return "✗"
 
-    def on_closing(self, event=0):
+    def on_closing(self, event=0): # usuwa pozostalosci po zmaknieciu aplikacji
         self.destroy()
 
     def start(self):
