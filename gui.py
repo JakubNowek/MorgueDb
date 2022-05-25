@@ -1,6 +1,9 @@
 import tkinter as tk
 import tkinter.messagebox
 import customtkinter
+from tksheet import Sheet
+from pandastable import Table, TableModel
+
 import db_connection
 from pandastable import Table, TableModel, config
 
@@ -55,12 +58,12 @@ class App(customtkinter.CTk):
 
 
         # ============ frame_left_part2 ============
-
-        # configure grid layout (1x11)
         self.frame_left.grid_rowconfigure(0, minsize=10)  # empty row with minsize as spacing
-        self.frame_left.grid_rowconfigure(5, weight=1)  # empty row as spacing
+        self.frame_left.grid_rowconfigure(7, weight=1)  # empty row as spacing
         self.frame_left.grid_rowconfigure(8, minsize=20)  # empty row with minsize as spacing
         self.frame_left.grid_rowconfigure(11, minsize=10)  # empty row with minsize as spacing
+        # configure grid layout (1x11)
+        self.frame_left.grid_rowconfigure(0, minsize=30)  # empty row with minsize as spacing
 
         self.label_1 = customtkinter.CTkLabel(master=self.frame_left,
                                               text="MorgueDB",
@@ -86,12 +89,12 @@ class App(customtkinter.CTk):
         self.button_3.grid(row=4, column=0, pady=10, padx=20)
 
         self.switch_1 = customtkinter.CTkSwitch(master=self.frame_left)
-        self.switch_1.grid(row=9, column=0, pady=10, padx=20, sticky="w")
+        self.switch_1.grid(row=12, column=0, pady=10, padx=20, sticky="w")
 
         self.switch_2 = customtkinter.CTkSwitch(master=self.frame_left,
                                                 text="Dark Mode",
                                                 command=self.change_mode)
-        self.switch_2.grid(row=10, column=0, pady=10, padx=20, sticky="w")
+        self.switch_2.grid(row=13, column=0, pady=10, padx=20, sticky="w")
 
         # ============ frame_info ============
 
@@ -243,10 +246,53 @@ class App(customtkinter.CTk):
     def details(self,id_pacjenta):
         x = db_connection.moreguDB()
         query = x.dane_pacjenta_rozszerzone(id_pacjenta)
-        print(1)
+        self.button_1.destroy()
+        self.button_2.destroy()
+        self.button_3.destroy() #usuniecie trzech glownych przyciskow
 
+        self.label_1 = customtkinter.CTkLabel(master=self.frame_left,
+                                              text="MorgueDB",
+                                              text_font=("Roboto Medium", -16)).grid(row=0, column=0, pady=10, padx=20)
 
+        self.button_4 = customtkinter.CTkButton(master=self.frame_left,
+                                                text="Dane Pacjenta",
+                                                fg_color=("gray75", "gray30"),  # <- custom tuple-color
+                                                command=lambda: self.select_dane_pacjenta_szczegolowe(query[0])).grid(row=1, column=0, pady=10, padx=20)
 
+        self.button_5 = customtkinter.CTkButton(master=self.frame_left,
+                                                text="Karta Zgonu",
+                                                fg_color=("gray75", "gray30"),  # <- custom tuple-color
+                                                command=lambda: self.button_lista_sal).grid(row=2, column=0, pady=10, padx=20)
+
+        self.button_6 = customtkinter.CTkButton(master=self.frame_left,
+                                                text="Dane transportowe",
+                                                fg_color=("gray75", "gray30"),  # <- custom tuple-color
+                                                command=lambda: self.button_lista_pacjentow_uproszczona).grid(row=3, column=0, pady=10, padx=20)
+
+        self.button_7 = customtkinter.CTkButton(master=self.frame_left,
+                                                text="Sekcja zwlok",
+                                                fg_color=("gray75", "gray30"),  # <- custom tuple-color
+                                                command=lambda: self.button_lista_pacjentow_uproszczona).grid(row=4, column=0,
+                                                                                                      pady=10, padx=20)
+
+        self.button_8 = customtkinter.CTkButton(master=self.frame_left,
+                                                text="Rzeczy znalezione",
+                                                fg_color=("gray75", "gray30"),  # <- custom tuple-color
+                                                command=lambda: self.button_lista_sal).grid(row=5, column=0, pady=10, padx=20)
+
+        self.button_9 = customtkinter.CTkButton(master=self.frame_left,
+                                                text="Dane do odbioru zwlok",
+                                                fg_color=("gray75", "gray30"),  # <- custom tuple-color
+                                                command=lambda: self.button_lista_pacjentow_uproszczona).grid(row=6, column=0,
+                                                                                                      pady=10, padx=20)
+
+    def select_dane_pacjenta_szczegolowe(self,query):
+        for widget in self.frame_pacjenci.winfo_children():
+            widget.destroy()
+        self.frame_pacjenci.tkraise()
+        pt = Table(self.frame_pacjenci, dataframe=query,
+                   showtoolbar=True, showstatusbar=True)
+        pt.show()
 
     def change_mode(self): # zmiana jasny ciemny motyw
             if self.switch_2.get() == 1:
