@@ -75,7 +75,7 @@ class App(customtkinter.CTk):
         self.button_2 = customtkinter.CTkButton(master=self.frame_left,
                                                 text="Lista Sal",
                                                 fg_color=("gray75", "gray30"),  # <- custom tuple-color
-                                                command=self.frame_pacjenci.tkraise)
+                                                command=self.button_lista_sal)
         self.button_2.grid(row=3, column=0, pady=10, padx=20)
 
         self.button_3 = customtkinter.CTkButton(master=self.frame_left,
@@ -169,11 +169,48 @@ class App(customtkinter.CTk):
 
             row += 1
 
+    def button_lista_sal(self):
+        x = db_connection.moreguDB()
+        df = x.lista_sal().values.tolist()
+        self.frame_pacjenci.tkraise()
+        self.frame_pacjenci.grid_columnconfigure(1, weight=1)
+        tk.Label(master=self.frame_pacjenci, text="Id sali", anchor="w").grid(row=0, column=0, sticky="ew")
+        tk.Label(master=self.frame_pacjenci, text="Stan", anchor="w").grid(row=0, column=1, sticky="ew")
+        tk.Label(master=self.frame_pacjenci, text="Typ", anchor="w").grid(row=0, column=2, sticky="ew")
+        tk.Label(master=self.frame_pacjenci, text="Ilosc Chłodni", anchor="w").grid(row=0, column=3, sticky="ew")
+        tk.Label(master=self.frame_pacjenci, text="Specjalna", anchor="w").grid(row=0, column=4, sticky="ew")
+        tk.Label(master=self.frame_pacjenci, text="Dok", anchor="w").grid(row=0, column=5, sticky="ew")
+        row = 1
+
+        for (id_sali, stan, typ, ilosc_chlodni, specjalna, dok) in df:
+            id_sali_label = tk.Label(master=self.frame_pacjenci, text=str(id_sali), anchor="w")
+            stan_label = tk.Label(master=self.frame_pacjenci, text=self.change_bool_to_mark(stan), anchor="w")
+            typ_label = tk.Label(master=self.frame_pacjenci, text=typ, anchor="w")
+            ilosc_chlodni_label = tk.Label(master=self.frame_pacjenci, text=ilosc_chlodni, anchor="w")
+            specjalna_label = tk.Label(master=self.frame_pacjenci, text=self.change_bool_to_mark(specjalna), anchor="w")
+            dok_label = tk.Label(master=self.frame_pacjenci, text=dok, anchor="w")
+
+            id_sali_label.grid(row=row, column=0, sticky="ew")
+            stan_label.grid(row=row, column=1, sticky="ew")
+            typ_label.grid(row=row, column=2, sticky="ew")
+            ilosc_chlodni_label.grid(row=row, column=3, sticky="ew")
+            specjalna_label.grid(row=row, column=4, sticky="ew")
+            dok_label.grid(row=row, column=5, sticky="ew")
+
+            row += 1
+
+
     def change_mode(self):
             if self.switch_2.get() == 1:
                 customtkinter.set_appearance_mode("dark")
             else:
                 customtkinter.set_appearance_mode("light")
+
+    def change_bool_to_mark(self,number):
+        if number==1:
+            return "✓"
+        else:
+            return "✗"
 
     def on_closing(self, event=0):
         self.destroy()
