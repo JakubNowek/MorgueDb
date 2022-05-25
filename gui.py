@@ -190,7 +190,11 @@ class App(customtkinter.CTk):
 
         for (id_sali, stan, typ, ilosc_chlodni, specjalna, dok) in df:
             id_sali_label = tk.Label(master=self.frame_pacjenci, text=str(id_sali), anchor="w")
-            stan_label = tk.Label(master=self.frame_pacjenci, text=self.change_bool_to_mark(stan), anchor="w")
+            stan_label = active_cb = tk.Checkbutton(master=self.frame_pacjenci, onvalue=True, offvalue=False)
+            if stan:
+                active_cb.select()
+            else:
+                active_cb.deselect()
             typ_label = tk.Label(master=self.frame_pacjenci, text=typ, anchor="w")
             ilosc_chlodni_label = tk.Label(master=self.frame_pacjenci, text=ilosc_chlodni, anchor="w")
             specjalna_label = tk.Label(master=self.frame_pacjenci, text=self.change_bool_to_mark(specjalna), anchor="w")
@@ -223,8 +227,6 @@ class App(customtkinter.CTk):
 
     def start(self):
         self.mainloop()
-
-
 
 if __name__ == "__main__":
     app = App()
