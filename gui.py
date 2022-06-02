@@ -1,8 +1,6 @@
 import tkinter as tk
-import tkinter.messagebox
 import customtkinter
-from tksheet import Sheet
-from pandastable import Table, TableModel
+import pandas as pd
 
 import db_connection
 from pandastable import Table, TableModel, config
@@ -262,37 +260,38 @@ class App(customtkinter.CTk):
         self.button_5 = customtkinter.CTkButton(master=self.frame_left,
                                                 text="Karta Zgonu",
                                                 fg_color=("gray75", "gray30"),  # <- custom tuple-color
-                                                command=lambda: self.button_lista_sal).grid(row=2, column=0, pady=10, padx=20)
+                                                command=lambda: self.select_dane_pacjenta_szczegolowe(query[1])).grid(row=2, column=0, pady=10, padx=20)
 
         self.button_6 = customtkinter.CTkButton(master=self.frame_left,
                                                 text="Dane transportowe",
                                                 fg_color=("gray75", "gray30"),  # <- custom tuple-color
-                                                command=lambda: self.button_lista_pacjentow_uproszczona).grid(row=3, column=0, pady=10, padx=20)
+                                                command=lambda: self.select_dane_pacjenta_szczegolowe(query[2])).grid(row=3, column=0, pady=10, padx=20)
 
         self.button_7 = customtkinter.CTkButton(master=self.frame_left,
                                                 text="Sekcja zwlok",
                                                 fg_color=("gray75", "gray30"),  # <- custom tuple-color
-                                                command=lambda: self.button_lista_pacjentow_uproszczona).grid(row=4, column=0,
-                                                                                                      pady=10, padx=20)
+                                                command=lambda: self.select_dane_pacjenta_szczegolowe(query[3])).grid(row=4, column=0, pady=10, padx=20)
 
         self.button_8 = customtkinter.CTkButton(master=self.frame_left,
                                                 text="Rzeczy znalezione",
                                                 fg_color=("gray75", "gray30"),  # <- custom tuple-color
-                                                command=lambda: self.button_lista_sal).grid(row=5, column=0, pady=10, padx=20)
+                                                command=lambda: self.select_dane_pacjenta_szczegolowe(query[4])).grid(row=5, column=0, pady=10, padx=20)
 
         self.button_9 = customtkinter.CTkButton(master=self.frame_left,
                                                 text="Dane do odbioru zwlok",
                                                 fg_color=("gray75", "gray30"),  # <- custom tuple-color
-                                                command=lambda: self.button_lista_pacjentow_uproszczona).grid(row=6, column=0,
-                                                                                                      pady=10, padx=20)
+                                                command=lambda: self.select_dane_pacjenta_szczegolowe(query[5])).grid(row=6, column=0, pady=10, padx=20)
 
     def select_dane_pacjenta_szczegolowe(self,query):
         for widget in self.frame_pacjenci.winfo_children():
             widget.destroy()
         self.frame_pacjenci.tkraise()
-        pt = Table(self.frame_pacjenci, dataframe=query,
+        pt = Table(self.frame_pacjenci, dataframe=pd.DataFrame(query),
                    showtoolbar=True, showstatusbar=True)
         pt.show()
+        pt.redraw()
+        pt.show()
+
 
     def change_mode(self): # zmiana jasny ciemny motyw
             if self.switch_2.get() == 1:

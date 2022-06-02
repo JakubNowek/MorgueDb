@@ -38,8 +38,8 @@ class moreguDB:
         list_of_dbtables=["dane_pacjentow","karta_zgonu","dane_transportowe","dane_sekcji","rzeczy_znalezione","dane_do_odbioru_zwlok"]
         result_query=[]
         for i in range(6):
-            query = self.engine.execute(f"select * from {list_of_dbtables[i]} where id_pacjenta <>{id_input}")
-            df = pd.DataFrame(query)
+            query = self.engine.execute(f"select * from {list_of_dbtables[i]} where id_pacjenta ={id_input}")
+            df = pd.DataFrame(query).values.tolist()
             result_query.append(df)
             query.close()
         return result_query
