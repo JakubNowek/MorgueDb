@@ -13,7 +13,7 @@ customtkinter.set_default_color_theme("blue")  # Themes: "blue" (standard), "gre
 
 
 
-class App(customtkinter.CTk):
+class Doctor(customtkinter.CTk):
     WIDTH = 840
     HEIGHT = 520
 
@@ -21,7 +21,7 @@ class App(customtkinter.CTk):
         super().__init__()
 
         self.title("MorgueDB")
-        self.geometry(f"{App.WIDTH}x{App.HEIGHT}")
+        self.geometry(f"{Doctor.WIDTH}x{Doctor.HEIGHT}")
 
         self.protocol("WM_DELETE_WINDOW", self.on_closing)  # call .on_closing() when app gets closed
 
@@ -115,28 +115,6 @@ class App(customtkinter.CTk):
 
     def button_event(self):
         print("Button pressed")
-
-    # def button_pacjenci(self):
-    #     self.frame_info.tkraise()
-    #     x = db_connection.moreguDB()
-    #     df = x.test_connection()
-    #     pt = Table(self.frame_info,dataframe=df,showtoolbar=True, showstatusbar=True)
-    #     options = {'align': 'w',
-    #          'cellbackgr': '#F4F4F3',
-    #          'cellwidth': 80,
-    #          'floatprecision': 2,
-    #          'thousandseparator': '',
-    #          'font': 'Arial',
-    #          'fontsize': 12,
-    #          'fontstyle': '',
-    #          'grid_color': '#ABB1AD',
-    #          'linewidth': 1,
-    #          'rowheight': 22,
-    #          'rowselectedcolor': '#E4DED4',
-    #          'textcolor': 'black'}
-    #     config.apply_options(options, pt)
-    #
-    #     pt.show()
 
     def button_lista_lekarzy(self):
         for widget in self.frame_pacjenci.winfo_children():
@@ -312,6 +290,6 @@ class App(customtkinter.CTk):
         self.mainloop()
 
 if __name__ == "__main__":
-    app = App()
+    app = Doctor()
     app.start()
 
