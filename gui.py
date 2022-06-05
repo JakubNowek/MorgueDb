@@ -118,10 +118,7 @@ class Doctor(customtkinter.CTk):
     def button_event(self):
         print("Button pressed")
 
-<<<<<<< Updated upstream
-=======
 
->>>>>>> Stashed changes
     def button_lista_lekarzy(self):
         for widget in self.frame_pacjenci.winfo_children():
             widget.destroy()  # czyscimy wszystkie obiekty z frame, aby przy przełączaniu okienek nie pozostały niepotrzebne dane
