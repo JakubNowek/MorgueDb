@@ -10,7 +10,7 @@ class moreguDB:
     def __init__(self):
         self.engine = create_engine("mysql+pymysql://{user}:{pw}@{localhost}:{port}/{db}"
                                     .format(user="root",
-                                            pw="PASSWORD HERE",
+                                            pw="hehexdxd123#",
                                             localhost="192.168.1.163",
                                             port="3306",
                                             db="morguedb"))
@@ -36,10 +36,16 @@ class moreguDB:
 
     def dane_pacjenta_rozszerzone(self,id_input):
         list_of_dbtables=["dane_pacjentow","karta_zgonu","dane_transportowe","dane_sekcji","rzeczy_znalezione","dane_do_odbioru_zwlok"]
-        result_query=[]
+        result_query = []
+        name_query = []
         for i in range(6):
             query = self.engine.execute(f"select * from {list_of_dbtables[i]} where id_pacjenta ={id_input}")
+            column_names = self.engine.execute(f"SELECT column_name FROM information_schema.columns WHERE  table_name = '{list_of_dbtables[i]}' AND table_schema = 'morguedb' ORDER BY ORDINAL_POSITION")
             df = pd.DataFrame(query).values.tolist()
+            af = pd.DataFrame(column_names).values.tolist()
+            name_query.append(af)
             result_query.append(df)
             query.close()
-        return result_query
+            column_names.close()
+            #print(name_query)
+        return result_query, name_query
