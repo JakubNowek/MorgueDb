@@ -24,14 +24,15 @@ class Doctor(customtkinter.CTk):
         self.geometry(f"{Doctor.WIDTH}x{Doctor.HEIGHT}")
 
         self.protocol("WM_DELETE_WINDOW", self.on_closing)  # call .on_closing() when app gets closed
+        self.create_title_frame()
 
+    def create_title_frame(self):
         # ============ create two frames ============
         #  ============ frame_left_part1 ============ # została podzielona na 2 czesci i przeniesiona tutaj ze względu na bugi tkintera
         # zawiera lewy pasek ktory jest niezmienny w programie, wyswietlanie odbywa sie na prawym pasku
         # configure grid layout (2x1)
         self.grid_columnconfigure(1, weight=1)
         self.grid_rowconfigure(0, weight=1)
-
         self.frame_left = customtkinter.CTkFrame(master=self,
                                                  width=180,
                                                  corner_radius=0)
@@ -62,6 +63,7 @@ class Doctor(customtkinter.CTk):
         self.frame_left.grid_rowconfigure(11, minsize=10)  # empty row with minsize as spacing
         # configure grid layout (1x11)
         self.frame_left.grid_rowconfigure(0, minsize=30)  # empty row with minsize as spacing
+        self.active_button_list = []
 
         self.label_1 = customtkinter.CTkLabel(master=self.frame_left,
                                               text="MorgueDB",
@@ -73,19 +75,19 @@ class Doctor(customtkinter.CTk):
                                                 fg_color=("gray75", "gray30"),  # <- custom tuple-color
                                                 command=self.button_lista_pacjentow_uproszczona)
         self.button_1.grid(row=2, column=0, pady=10, padx=20)
-
+        self.active_button_list.append(self.button_1)
         self.button_2 = customtkinter.CTkButton(master=self.frame_left,
                                                 text="Lista Sal",
                                                 fg_color=("gray75", "gray30"),  # <- custom tuple-color
                                                 command=self.button_lista_sal)
         self.button_2.grid(row=3, column=0, pady=10, padx=20)
-
+        self.active_button_list.append(self.button_2)
         self.button_3 = customtkinter.CTkButton(master=self.frame_left,
-                                                text="Grafik",
+                                                text="Lekarze",
                                                 fg_color=("gray75", "gray30"),  # <- custom tuple-color
-                                                command=self.button_lista_pacjentow_uproszczona)
+                                                command=self.button_lista_lekarzy)
         self.button_3.grid(row=4, column=0, pady=10, padx=20)
-
+        self.active_button_list.append(self.button_3)
         self.switch_1 = customtkinter.CTkSwitch(master=self.frame_left)
         self.switch_1.grid(row=12, column=0, pady=10, padx=20, sticky="w")
 
@@ -115,6 +117,7 @@ class Doctor(customtkinter.CTk):
 
     def button_event(self):
         print("Button pressed")
+
 
     def button_lista_lekarzy(self):
         for widget in self.frame_pacjenci.winfo_children():
@@ -221,50 +224,80 @@ class Doctor(customtkinter.CTk):
 
     def details(self,id_pacjenta):
         x = db_connection.moreguDB()
-        query = x.dane_pacjenta_rozszerzone(id_pacjenta)
-        self.button_1.destroy()
-        self.button_2.destroy()
-        self.button_3.destroy() #usuniecie trzech glownych przyciskow
+        query, name_query = x.dane_pacjenta_rozszerzone(id_pacjenta)
+        for i in range(0, len(self.active_button_list)):
+            self.active_button_list[i].destroy()
 
+
+        self.active_button_list = []
         self.label_1 = customtkinter.CTkLabel(master=self.frame_left,
                                               text="MorgueDB",
-                                              text_font=("Roboto Medium", -16)).grid(row=0, column=0, pady=10, padx=20)
-
+                                              text_font=("Roboto Medium", -16))
+        self.label_1.grid(row=0, column=0, pady=10, padx=20)
+        self.active_button_list.append(self.label_1)
         self.button_4 = customtkinter.CTkButton(master=self.frame_left,
                                                 text="Dane Pacjenta",
                                                 fg_color=("gray75", "gray30"),  # <- custom tuple-color
-                                                command=lambda: self.select_dane_pacjenta_szczegolowe(query[0])).grid(row=1, column=0, pady=10, padx=20)
+                                                command=lambda: self.select_dane_pacjenta_szczegolowe(query[0],name_query[0]))
+        self.button_4.grid(row=1, column=0, pady=10, padx=20)
+        self.active_button_list.append(self.button_4)
 
         self.button_5 = customtkinter.CTkButton(master=self.frame_left,
                                                 text="Karta Zgonu",
                                                 fg_color=("gray75", "gray30"),  # <- custom tuple-color
-                                                command=lambda: self.select_dane_pacjenta_szczegolowe(query[1])).grid(row=2, column=0, pady=10, padx=20)
-
+                                                command=lambda: self.select_dane_pacjenta_szczegolowe(query[1],name_query[1]))
+        self.button_5.grid(row=2, column=0, pady=10, padx=20)
+        self.active_button_list.append(self.button_5)
         self.button_6 = customtkinter.CTkButton(master=self.frame_left,
                                                 text="Dane transportowe",
                                                 fg_color=("gray75", "gray30"),  # <- custom tuple-color
-                                                command=lambda: self.select_dane_pacjenta_szczegolowe(query[2])).grid(row=3, column=0, pady=10, padx=20)
-
+                                                command=lambda: self.select_dane_pacjenta_szczegolowe(query[2],name_query[2]))
+        self.button_6.grid(row=3, column=0, pady=10, padx=20)
+        self.active_button_list.append(self.button_6)
         self.button_7 = customtkinter.CTkButton(master=self.frame_left,
                                                 text="Sekcja zwlok",
                                                 fg_color=("gray75", "gray30"),  # <- custom tuple-color
-                                                command=lambda: self.select_dane_pacjenta_szczegolowe(query[3])).grid(row=4, column=0, pady=10, padx=20)
-
+                                                command=lambda: self.select_dane_pacjenta_szczegolowe(query[3],name_query[3]))
+        self.button_7.grid(row=4, column=0, pady=10, padx=20)
+        self.active_button_list.append(self.button_7)
         self.button_8 = customtkinter.CTkButton(master=self.frame_left,
                                                 text="Rzeczy znalezione",
                                                 fg_color=("gray75", "gray30"),  # <- custom tuple-color
-                                                command=lambda: self.select_dane_pacjenta_szczegolowe(query[4])).grid(row=5, column=0, pady=10, padx=20)
-
+                                                command=lambda: self.select_dane_pacjenta_szczegolowe(query[4],name_query[4]))
+        self.button_8.grid(row=5, column=0, pady=10, padx=20)
+        self.active_button_list.append(self.button_8)
         self.button_9 = customtkinter.CTkButton(master=self.frame_left,
                                                 text="Dane do odbioru zwlok",
                                                 fg_color=("gray75", "gray30"),  # <- custom tuple-color
-                                                command=lambda: self.select_dane_pacjenta_szczegolowe(query[5])).grid(row=6, column=0, pady=10, padx=20)
+                                                command=lambda: self.select_dane_pacjenta_szczegolowe(query[5],name_query[5]))
+        self.button_9.grid(row=6, column=0, pady=10, padx=20)
+        self.active_button_list.append(self.button_9)
+        self.button_10 = customtkinter.CTkButton(master=self.frame_left,
+                                                text="Powrot",
+                                                fg_color=("gray75", "gray30"),  # <- custom tuple-color
+                                                command= self.back_button)
+        self.button_10.grid(row=8, column=0, pady=10, padx=20)
+        self.active_button_list.append(self.button_10)
 
-    def select_dane_pacjenta_szczegolowe(self,query):
+
+
+    def back_button(self):
+        for widget in self.frame_pacjenci.winfo_children():
+            widget.destroy()
+        for i in range(0, len(self.active_button_list)):
+            self.active_button_list[i].destroy()
+
+        self.active_button_list = []
+        self.create_title_frame()
+
+
+    def select_dane_pacjenta_szczegolowe(self,query,name_query):
         for widget in self.frame_pacjenci.winfo_children():
             widget.destroy()
         self.frame_pacjenci.tkraise()
-        pt = Table(self.frame_pacjenci, dataframe=pd.DataFrame(query),
+        df = pd.DataFrame(query)
+        df.columns = pd.DataFrame(name_query)
+        pt = Table(self.frame_pacjenci, dataframe=df,
                    showtoolbar=True, showstatusbar=True)
         pt.show()
         pt.redraw()
