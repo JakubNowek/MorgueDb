@@ -355,10 +355,29 @@ class Doctor(customtkinter.CTk):
         df = pd.DataFrame(query)
         df.columns = pd.DataFrame(name_query)
         pt = Table(self.frame_pacjenci, dataframe=df,
-                   showtoolbar=True, showstatusbar=True)
+                   showtoolbar=True, showstatusbar=True, editable=True, command=self.set_cell)
+        pt.grid(row=0, column=0)
         pt.show()
         pt.redraw()
         pt.show()
+        self.button_7 = customtkinter.CTkButton(master=self.frame_pacjenci,
+                                                text="Aktualizuj baze",
+                                                fg_color=("gray75", "gray30"),  # <- custom tuple-color
+                                                command=lambda: self.insert_dataframe_to_db(pt.model.df))
+        self.button_7.grid(row=4, column=1, pady=10, padx=20)
+
+    def insert_dataframe_to_db(self, df):
+        x = db_connection.moreguDB()
+        new_df = df.reset_index(drop=True)
+        new_df.to_sql('dane_transportowe', x.engine, if_exists='replace', index=False)
+
+    def set_cell(val):
+        row = app.table.getSelectedRow()
+        col = app.table.getSelectedColumn()
+        app.table.model.setValueAt(val, row, col)
+        app.table.redraw()
+        df = app.table.model.df
+        print(df)
 
 
     def change_mode(self): # zmiana jasny ciemny motyw
