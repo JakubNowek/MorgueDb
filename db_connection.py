@@ -48,4 +48,5 @@ class moreguDB:
             query.close()
             column_names.close()
             #print(name_query)
+            #print(result_query)
         return result_query, name_query

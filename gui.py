@@ -319,7 +319,12 @@ class Doctor(customtkinter.CTk):
             widget.destroy()
         self.frame_pacjenci.tkraise()
         df = pd.DataFrame(query)
-        df.columns = pd.DataFrame(name_query)
+        header_lst = []
+        print(len(name_query))
+        for i in range(len(name_query)):
+            header_lst.append(name_query[i][0])
+        print(header_lst)
+        df.columns = header_lst
         pt = Table(self.frame_pacjenci, dataframe=df,
                    showtoolbar=True, showstatusbar=True)
         pt.show()
