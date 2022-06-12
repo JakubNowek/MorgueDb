@@ -1,25 +1,82 @@
 import tkinter as tk
 import customtkinter
 import pandas as pd
-
 import db_connection
 from pandastable import Table, TableModel, config
-
+import tkinter.messagebox
+from PIL import Image, ImageTk
+import os
 
 
 customtkinter.set_appearance_mode("Light")  # Modes: "System" (standard), "Dark", "Light"
 customtkinter.set_default_color_theme("blue")  # Themes: "blue" (standard), "green", "dark-blue"
 
 
+PATH = os.path.dirname(os.path.realpath(__file__))
 
+log = ''
+pwd = ''
 
-class Doctor(customtkinter.CTk):
+class Login_Screen(customtkinter.CTk):
+
     WIDTH = 840
     HEIGHT = 520
 
     def __init__(self):
         super().__init__()
 
+        self.title("MorgueDB")
+        self.geometry(f"{Login_Screen.WIDTH}x{Login_Screen.HEIGHT}")
+        # jak się to odkomentuje, to nie będzie można rozciągać okienka
+        self.minsize(Login_Screen.WIDTH, Login_Screen.HEIGHT)
+        self.maxsize(Login_Screen.WIDTH, Login_Screen.HEIGHT)
+        self.resizable(False, False)
+        self.protocol("WM_DELETE_WINDOW", self.on_closing)
+        # load image with PIL and convert to PhotoImage
+        image = Image.open(PATH + "\\logowanie.jpg").resize((1100, 800))
+        self.bg_image = ImageTk.PhotoImage(image)
+        self.connection = ''
+        self.image_label = tkinter.Label(master=self, image=self.bg_image)
+        self.image_label.place(x=0, y=0, relwidth=1, relheight=1)
+
+        self.label_1 = customtkinter.CTkLabel(master=self, width=100, height=100,
+                                              fg_color=("gray70", "gray25"), text="Avatar\nużytkownika")
+        self.label_1.place(relx=0.5, rely=0.3, anchor=tkinter.CENTER)
+
+        self.entry_1 = customtkinter.CTkEntry(master=self, corner_radius=6, width=200, placeholder_text="nazwa użytkownika")
+        self.entry_1.place(relx=0.5, rely=0.52, anchor=tkinter.CENTER)
+
+        self.entry_2 = customtkinter.CTkEntry(master=self, corner_radius=6, width=200, show="*", placeholder_text="hasło")
+        self.entry_2.place(relx=0.5, rely=0.6, anchor=tkinter.CENTER)
+
+        self.button_2 = customtkinter.CTkButton(master=self, text="Login", corner_radius=6,
+                                                command=self.button_event, width=200)
+        self.button_2.place(relx=0.5, rely=0.7, anchor=tkinter.CENTER)
+
+    def button_event(self):
+        try:
+            self.connection = db_connection.morgueDB(self.entry_1.get(), self.entry_2.get())
+            print('POLACZONO')
+            global log, pwd
+            log = self.entry_1.get()
+            pwd = self.entry_2.get()
+            self.destroy()
+
+        except:
+            print('Zły login lub hasło.')
+
+    def on_closing(self, event=0):
+        self.destroy()
+    def start(self):
+        self.mainloop()
+
+class Doctor(customtkinter.CTk):
+    WIDTH = 840
+    HEIGHT = 520
+    def __init__(self,user,passwd):
+        super().__init__()
+        self.user = user
+        self.passwd = passwd
         self.title("MorgueDB")
         self.geometry(f"{Doctor.WIDTH}x{Doctor.HEIGHT}")
 
@@ -122,7 +179,7 @@ class Doctor(customtkinter.CTk):
     def button_lista_lekarzy(self):
         for widget in self.frame_pacjenci.winfo_children():
             widget.destroy()  # czyscimy wszystkie obiekty z frame, aby przy przełączaniu okienek nie pozostały niepotrzebne dane
-        x = db_connection.moreguDB()
+        x = db_connection.morgueDB(self.user, self.passwd)
         df = x.test_connection().values.tolist() # pobieramy wartosci z bazy danych i zapisujemy do listy
         self.frame_pacjenci.tkraise() #wysuwamy frame na pierwsze miejsce
         self.frame_pacjenci.grid_columnconfigure(1, weight=1)
@@ -158,7 +215,7 @@ class Doctor(customtkinter.CTk):
         for widget in self.frame_pacjenci.winfo_children():
             widget.destroy()
 
-        x = db_connection.moreguDB()
+        x = db_connection.morgueDB(self.user, self.passwd)
         df = x.lista_sal().values.tolist()
         self.frame_pacjenci.tkraise()
         self.frame_pacjenci.grid_columnconfigure(1, weight=1)
@@ -195,7 +252,7 @@ class Doctor(customtkinter.CTk):
         for widget in self.frame_pacjenci.winfo_children():
             widget.destroy()
 
-        x = db_connection.moreguDB()
+        x = db_connection.morgueDB(self.user, self.passwd)
         df = x.dane_pacjentow_uproszczona().values.tolist()
         self.frame_pacjenci.tkraise()
         self.frame_pacjenci.grid_columnconfigure(1, weight=1)
@@ -223,7 +280,7 @@ class Doctor(customtkinter.CTk):
 
 
     def details(self,id_pacjenta):
-        x = db_connection.moreguDB()
+        x = db_connection.morgueDB(self.user, self.passwd)
         query, name_query = x.dane_pacjenta_rozszerzone(id_pacjenta)
         for i in range(0, len(self.active_button_list)):
             self.active_button_list[i].destroy()
@@ -310,7 +367,7 @@ class Doctor(customtkinter.CTk):
             else:
                 customtkinter.set_appearance_mode("light")
 
-    def change_bool_to_mark(self,number): # zamienie boola na yes/no marka
+    def change_bool_to_mark(self, number):  # zamienie boola na yes/no marka
         if number==1:
             return "✓"
         else:
@@ -323,6 +380,8 @@ class Doctor(customtkinter.CTk):
         self.mainloop()
 
 if __name__ == "__main__":
-    app = Doctor()
+    app_log = Login_Screen()
+    app_log.start()
+    app = Doctor(log, pwd)
     app.start()
 

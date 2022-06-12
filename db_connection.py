@@ -6,11 +6,11 @@ import pymysql
 import tksheet
 
 
-class moreguDB:
-    def __init__(self):
+class morgueDB:
+    def __init__(self, user, passwd):
         self.engine = create_engine("mysql+pymysql://{user}:{pw}@{localhost}:{port}/{db}"
-                                    .format(user="root",
-                                            pw="hehexdxd123#",
+                                    .format(user=user,
+                                            pw=passwd,
                                             localhost="192.168.1.163",
                                             port="3306",
                                             db="morguedb"))
