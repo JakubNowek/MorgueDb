@@ -3,15 +3,13 @@ import customtkinter
 import pandas as pd
 
 import db_connection
+import login_screen
 from pandastable import Table, TableModel, config
 
 
 
 customtkinter.set_appearance_mode("Light")  # Modes: "System" (standard), "Dark", "Light"
 customtkinter.set_default_color_theme("blue")  # Themes: "blue" (standard), "green", "dark-blue"
-
-
-
 
 class Doctor(customtkinter.CTk):
     WIDTH = 840
@@ -88,6 +86,12 @@ class Doctor(customtkinter.CTk):
                                                 command=self.button_lista_lekarzy)
         self.button_3.grid(row=4, column=0, pady=10, padx=20)
         self.active_button_list.append(self.button_3)
+        self.button_start_4 = customtkinter.CTkButton(master=self.frame_left,
+                                                text="Wyloguj",
+                                                fg_color=("gray75", "gray30"),  # <- custom tuple-color
+                                                command=self.logout_button)
+        self.button_start_4.grid(row=9, column=0, pady=10, padx=20)
+        self.active_button_list.append(self.button_start_4)
         self.switch_1 = customtkinter.CTkSwitch(master=self.frame_left)
         self.switch_1.grid(row=12, column=0, pady=10, padx=20, sticky="w")
 
@@ -278,8 +282,12 @@ class Doctor(customtkinter.CTk):
                                                 command= self.back_button)
         self.button_10.grid(row=8, column=0, pady=10, padx=20)
         self.active_button_list.append(self.button_10)
-
-
+        self.button_11 = customtkinter.CTkButton(master=self.frame_left,
+                                                 text="Wyloguj",
+                                                 fg_color=("gray75", "gray30"),  # <- custom tuple-color
+                                                 command=self.logout_button)
+        self.button_11.grid(row=9, column=0, pady=10, padx=20)
+        self.active_button_list.append(self.button_11)
 
     def back_button(self):
         for widget in self.frame_pacjenci.winfo_children():
@@ -289,6 +297,21 @@ class Doctor(customtkinter.CTk):
 
         self.active_button_list = []
         self.create_title_frame()
+
+
+    def logout_button(self):
+        for widget in self.frame_pacjenci.winfo_children():
+            widget.destroy()
+        for i in range(0, len(self.active_button_list)):
+            self.active_button_list[i].destroy()
+
+        self.active_button_list = []
+
+        self.destroy()
+        log_screen = login_screen.Login_Screen()
+        log_screen.start()
+
+
 
 
     def select_dane_pacjenta_szczegolowe(self,query,name_query):
@@ -321,6 +344,10 @@ class Doctor(customtkinter.CTk):
 
     def start(self):
         self.mainloop()
+
+
+
+
 
 if __name__ == "__main__":
     app = Doctor()

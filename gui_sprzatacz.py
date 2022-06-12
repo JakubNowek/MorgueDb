@@ -3,14 +3,13 @@ import customtkinter
 import pandas as pd
 
 import db_connection
+import login_screen
 from pandastable import Table, TableModel, config
 
 
 
 customtkinter.set_appearance_mode("Light")  # Modes: "System" (standard), "Dark", "Light"
 customtkinter.set_default_color_theme("blue")  # Themes: "blue" (standard), "green", "dark-blue"
-
-
 
 
 class Sprzatacz(customtkinter.CTk):
@@ -76,6 +75,12 @@ class Sprzatacz(customtkinter.CTk):
                                                 command=self.button_lista_sal)
         self.button_1.grid(row=3, column=0, pady=10, padx=20)
         self.active_button_list.append(self.button_1)
+        self.button_start_4 = customtkinter.CTkButton(master=self.frame_left,
+                                                      text="Wyloguj",
+                                                      fg_color=("gray75", "gray30"),  # <- custom tuple-color
+                                                      command=self.logout_button)
+        self.button_start_4.grid(row=9, column=0, pady=10, padx=20)
+        self.active_button_list.append(self.button_start_4)
         self.switch_1 = customtkinter.CTkSwitch(master=self.frame_left)
         self.switch_1.grid(row=12, column=0, pady=10, padx=20, sticky="w")
 
@@ -151,6 +156,19 @@ class Sprzatacz(customtkinter.CTk):
 
         self.active_button_list = []
         self.create_title_frame()
+
+    def logout_button(self):
+        for widget in self.frame_pacjenci.winfo_children():
+            widget.destroy()
+        for i in range(0, len(self.active_button_list)):
+            self.active_button_list[i].destroy()
+
+        self.active_button_list = []
+
+        self.destroy()
+        log_screen = login_screen.Login_Screen()
+        log_screen.start()
+
 
 
     def change_mode(self): # zmiana jasny ciemny motyw
