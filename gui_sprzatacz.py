@@ -3,7 +3,7 @@ import customtkinter
 import pandas as pd
 
 import db_connection
-import login_screen
+import gui
 from pandastable import Table, TableModel, config
 
 
@@ -166,7 +166,7 @@ class Sprzatacz(customtkinter.CTk):
         self.active_button_list = []
 
         self.destroy()
-        log_screen = login_screen.Login_Screen()
+        log_screen = gui.Login_Screen()
         log_screen.start()
 
 

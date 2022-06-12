@@ -145,6 +145,12 @@ class Doctor(customtkinter.CTk):
                                                 command=self.button_lista_lekarzy)
         self.button_3.grid(row=4, column=0, pady=10, padx=20)
         self.active_button_list.append(self.button_3)
+        self.button_start_4 = customtkinter.CTkButton(master=self.frame_left,
+                                                      text="Wyloguj",
+                                                      fg_color=("gray75", "gray30"),  # <- custom tuple-color
+                                                      command=self.logout_button)
+        self.button_start_4.grid(row=9, column=0, pady=10, padx=20)
+        self.active_button_list.append(self.button_start_4)
         self.switch_1 = customtkinter.CTkSwitch(master=self.frame_left)
         self.switch_1.grid(row=12, column=0, pady=10, padx=20, sticky="w")
 
@@ -335,6 +341,12 @@ class Doctor(customtkinter.CTk):
                                                 command= self.back_button)
         self.button_10.grid(row=8, column=0, pady=10, padx=20)
         self.active_button_list.append(self.button_10)
+        self.button_11 = customtkinter.CTkButton(master=self.frame_left,
+                                                 text="Wyloguj",
+                                                 fg_color=("gray75", "gray30"),  # <- custom tuple-color
+                                                 command=self.logout_button)
+        self.button_11.grid(row=9, column=0, pady=10, padx=20)
+        self.active_button_list.append(self.button_11)
 
 
 
@@ -347,13 +359,34 @@ class Doctor(customtkinter.CTk):
         self.active_button_list = []
         self.create_title_frame()
 
+    def logout_button(self):
+        for widget in self.frame_pacjenci.winfo_children():
+            widget.destroy()
+        for i in range(0, len(self.active_button_list)):
+            self.active_button_list[i].destroy()
+
+        self.active_button_list = []
+
+        self.destroy()
+        log_screen = Login_Screen()
+        log_screen.start()
+
 
     def select_dane_pacjenta_szczegolowe(self,query,name_query):
         for widget in self.frame_pacjenci.winfo_children():
             widget.destroy()
         self.frame_pacjenci.tkraise()
         df = pd.DataFrame(query)
-        df.columns = pd.DataFrame(name_query)
+        header_lst = []
+        print(len(name_query))
+        for i in range(len(name_query)):
+            header_lst.append(name_query[i][0])
+        print(header_lst)
+        df.columns = header_lst
+
+
+
+
         pt = Table(self.frame_pacjenci, dataframe=df,
                    showtoolbar=True, showstatusbar=True, editable=True, command=self.set_cell)
         pt.grid(row=0, column=0)
