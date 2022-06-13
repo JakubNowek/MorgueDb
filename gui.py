@@ -16,6 +16,8 @@ PATH = os.path.dirname(os.path.realpath(__file__))
 
 log = ''
 pwd = ''
+log_flag = 1
+doc_flag = 1
 
 class Login_Screen(customtkinter.CTk):
 
@@ -57,16 +59,21 @@ class Login_Screen(customtkinter.CTk):
         try:
             self.connection = db_connection.morgueDB(self.entry_1.get(), self.entry_2.get())
             print('POLACZONO')
-            global log, pwd
+            global log, pwd, doc_flag
             log = self.entry_1.get()
             pwd = self.entry_2.get()
+            doc_flag = 1
             self.destroy()
 
         except:
             print('Zły login lub hasło.')
 
     def on_closing(self, event=0):
+        global log_flag, doc_flag
+        log_flag = 0
+        doc_flag = 0
         self.destroy()
+
     def start(self):
         self.mainloop()
 
@@ -368,8 +375,10 @@ class Doctor(customtkinter.CTk):
         self.active_button_list = []
 
         self.destroy()
-        log_screen = Login_Screen()
-        log_screen.start()
+        global log, pwd, doc_flag
+        log = ''
+        pwd = ''
+        doc_flag = 0
 
 
     def select_dane_pacjenta_szczegolowe(self,query,name_query):
@@ -401,6 +410,7 @@ class Doctor(customtkinter.CTk):
 
     def insert_dataframe_to_db(self, df):
         session = db_connection.morgueDB(log, pwd)
+        x = db_connection.morgueDB()
         new_df = df.reset_index(drop=True)
         new_df.to_sql('dane_transportowe', session.engine, if_exists='replace', index=False)
 
@@ -425,16 +435,21 @@ class Doctor(customtkinter.CTk):
         else:
             return "✗"
 
-    def on_closing(self, event=0): # usuwa pozostalosci po zmaknieciu aplikacji
+    def on_closing(self, event=0):  # usuwa pozostalosci po zmaknieciu aplikacji
+        global doc_flag, log_flag
+        doc_flag = 0
+        log_flag = 0
         self.destroy()
 
     def start(self):
         self.mainloop()
-
+# sprawdzić czy nie działałoby sprawdzanie czy funkcja skończyła pracę w sposób: if func == None
 if __name__ == "__main__":
-    app_log = Login_Screen()
-    app_log.start()
-    if pwd != '':
+    while log_flag or doc_flag:
+        app_log = Login_Screen()
+        app_log.start()
         app = Doctor(log, pwd)
-        app.start()
+        if pwd != '':
+            app.start()
+
 
