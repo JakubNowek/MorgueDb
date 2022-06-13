@@ -410,7 +410,6 @@ class Doctor(customtkinter.CTk):
 
     def insert_dataframe_to_db(self, df):
         session = db_connection.morgueDB(log, pwd)
-        x = db_connection.morgueDB()
         new_df = df.reset_index(drop=True)
         new_df.to_sql('dane_transportowe', session.engine, if_exists='replace', index=False)
 
