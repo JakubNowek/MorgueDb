@@ -434,6 +434,7 @@ class Doctor(customtkinter.CTk):
 if __name__ == "__main__":
     app_log = Login_Screen()
     app_log.start()
-    app = Doctor(log, pwd)
-    app.start()
+    if pwd != '':
+        app = Doctor(log, pwd)
+        app.start()
 
