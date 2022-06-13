@@ -400,9 +400,9 @@ class Doctor(customtkinter.CTk):
         self.button_7.grid(row=4, column=1, pady=10, padx=20)
 
     def insert_dataframe_to_db(self, df):
-        x = db_connection.moreguDB()
+        session = db_connection.morgueDB(log, pwd)
         new_df = df.reset_index(drop=True)
-        new_df.to_sql('dane_transportowe', x.engine, if_exists='replace', index=False)
+        new_df.to_sql('dane_transportowe', session.engine, if_exists='replace', index=False)
 
     def set_cell(val):
         row = app.table.getSelectedRow()
